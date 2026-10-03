@@ -1,0 +1,7 @@
+import {mappedEntries} from './engine.js';import {yieldToUI} from './large-data.js';
+let worker,id=0;const pending=new Map();
+function ensureWorker(){if(worker)return worker;worker=new Worker(new URL('./import-worker.js',import.meta.url),{type:'module'});worker.onmessage=({data})=>{const p=pending.get(data.id);if(!p)return;if(data.error){pending.delete(data.id);p.reject(Error(data.error));return;}if(data.batch){for(const e of data.batch)p.entries.push(e);p.onProgress?.(data.progress);}if(data.done){pending.delete(data.id);p.resolve(data.value||p.entries);}};worker.onerror=()=>{for(const p of pending.values())p.reject(Error('The import could not be prepared. Try a smaller file.'));pending.clear();worker.terminate();worker=null;};return worker;}
+function request(action,payload,onProgress){return new Promise((resolve,reject)=>{const requestId=++id;pending.set(requestId,{resolve,reject,entries:[],onProgress});ensureWorker().postMessage({id:requestId,action,...payload});});}
+export const previewData=(text,type)=>request('preview',{text,type});
+export const buildImportEntries=(map,header,onProgress)=>request('entries',{map,header},onProgress);
+export async function mapRowsInBatches(rows,map,onProgress=()=>{}){const entries=[];for(let start=0;start<rows.length;start+=10000){for(const e of mappedEntries(rows.slice(start,start+10000),map))entries.push(e);onProgress(Math.min(1,(start+10000)/rows.length));await yieldToUI();}return entries;}

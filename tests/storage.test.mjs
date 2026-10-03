@@ -1,0 +1,23 @@
+import 'fake-indexeddb/auto';
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {openStorage,write,read} from '../dist/storage.js';
+import {newWheel,entry} from '../dist/engine.js';
+test('large local sessions and saved libraries round-trip in chunks; stale saves preserve committed data',async()=>{
+  await openStorage();
+  const wheel=newWheel('ქართული',[]);
+  wheel.entries=Array.from({length:20001},(_,i)=>entry(`ნიკა ${i}`));
+  wheel.entries[100].weight=3; wheel.entries[101].enabled=false;
+  const data={wheels:[wheel,newWheel('Second',['A'])],activeId:wheel.id,revision:1};
+  assert.equal(await write('test-session',data),true);
+  const loaded=await read('test-session');
+  assert.deepEqual(loaded,data);
+  const library=[{id:'save',name:'Large save',configuration:data}];
+  await write('test-library',library);
+  assert.deepEqual(await read('test-library'),library);
+  const pending=write('test-session',data);data.revision++;
+  assert.equal(await pending,false);
+  assert.equal((await read('test-session')).revision,1);
+  await write('test-session',{wheels:[newWheel('Small',['B'])]});
+  assert.equal((await read('test-session')).wheels[0].entries[0].text,'B');
+});

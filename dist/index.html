@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#202039" />
+    <meta
+      name="description"
+      content="Xizana Spinner is a private, local-first random wheel studio. Make fair weighted picks, create teams, and bring your next event to life."
+    />
+    <title>Xizana Spinner — A little chance. A great choice.</title>
+    <link rel="icon" href="favicon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to wheel</a>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Xizana Spinner home"
+        ><span class="brandmark">◉</span>Xizana Spinner<span class="brandnote"
+          >WHEEL STUDIO</span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <button data-action="templates">Templates</button
+        ><button data-action="library">Saved wheels</button
+        ><button
+          data-action="help"
+          class="icon"
+          aria-label="Help and shortcuts"
+        >
+          ?</button
+        ><button data-action="theme" class="icon" aria-label="Change theme">
+          ◐</button
+        ><button data-action="share" class="outlined">Share wheel</button>
+      </nav>
+    </header>
+    <main id="main">
+      <div class="workspace-heading">
+        <div>
+          <div class="eyebrow">LET CHANCE TAKE A TURN</div>
+          <h1 id="wheel-title">The good kind of indecision.</h1>
+          <p id="wheel-description">
+            Add your possibilities. Find your next pick.
+          </p>
+        </div>
+        <div class="heading-actions">
+          <span id="save-status">Saved on this device</span
+          ><button data-action="save" class="outlined">Save session</button>
+        </div>
+      </div>
+      <div class="wheel-tabs" id="wheel-tabs">
+        <button class="active">My first wheel</button
+        ><button data-action="add-wheel" aria-label="Add wheel">＋</button>
+      </div>
+      <section class="studio">
+        <div class="stage">
+          <div class="stage-top">
+            <span class="pill" id="fair-label"
+              >CRYPTO RANDOM · WEIGHTED FAIRLY</span
+            >
+            <div>
+              <button
+                class="icon"
+                data-action="customize"
+                aria-label="Customize wheel"
+              >
+                ✧</button
+              ><button
+                class="icon"
+                data-action="fullscreen"
+                aria-label="Fullscreen presentation"
+              >
+                ⛶
+              </button>
+            </div>
+          </div>
+          <div class="wheel-wrap">
+            <div class="pointer" aria-hidden="true"></div>
+            <canvas
+              id="wheel"
+              width="1000"
+              height="1000"
+              aria-label="Random wheel preview"
+            ></canvas
+            ><button
+              class="hub"
+              id="hub"
+              data-action="hub"
+              aria-label="Spin the wheel"
+            >
+              SPIN<span>YOUR LUCK</span>
+            </button>
+          </div>
+          <div class="spin-controls">
+            <button
+              class="primary spin-button"
+              data-action="spin"
+              id="spin-button"
+            >
+              Spin the wheel <span>↻</span></button
+            ><select id="duration" aria-label="Spin duration">
+              <option value="2">Fast · 2s</option>
+              <option value="5" selected>Normal · 5s</option>
+              <option value="9">Long · 9s</option>
+              <option value="14">Dramatic · 14s</option>
+<option value="custom">Custom…</option>
+            </select>
+          </div>
+          <label id="custom-duration-field" class="custom-duration-field" hidden>Spin time<input id="custom-duration" type="number" min="0.1" max="86400" step="0.1" inputmode="decimal" value="5" aria-label="Custom spin duration in seconds"><span>seconds</span></label>
+<progress id="spin-progress" max="1" value="0" aria-label="Spin progress" hidden></progress>
+<p class="spin-hint" id="spin-status">
+            or press <kbd>space</kbd> to let fate decide
+          </p>
+          <button
+            id="exit-presentation"
+            data-action="fullscreen"
+            class="outlined"
+          >
+            Exit presentation
+          </button>
+          <div id="last-pick" class="last-pick"></div>
+        </div>
+        <aside class="editor">
+          <div class="editor-heading">
+            <div>
+              <h2>
+                On the wheel <span id="entry-count" class="count">8</span>
+              </h2>
+              <p>Every possibility starts here.</p>
+            </div>
+            <button
+              class="icon"
+              data-action="entry-menu"
+              aria-label="Entry actions"
+            >
+              ⋯
+            </button>
+          </div>
+          <div class="editor-tabs" role="tablist" aria-label="Entry editor">
+            <button
+              id="simple-tab"
+              aria-controls="simple-editor"
+              data-action="simple"
+              role="tab"
+              aria-selected="true"
+            >
+              Simple</button
+            ><button
+              id="advanced-tab"
+              aria-controls="advanced-editor"
+              data-action="advanced"
+              role="tab"
+              aria-selected="false"
+            >
+              Advanced <span>↗</span>
+            </button>
+          </div>
+          <div id="simple-editor" role="tabpanel" aria-labelledby="simple-tab">
+            <label class="sr-only" for="entries">Entries, one per line</label
+            ><textarea
+              id="entries"
+              spellcheck="false"
+              placeholder="One name or idea per line…"
+            >
+Alex
+Emma
+Noah
+Olivia
+Liam
+Sophia
+James
+Amelia</textarea>
+            <div class="editor-note">
+              <span class="tiny-dot"></span>Updates as you type<span
+                id="line-count"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                >8 entries</span
+              >
+            </div>
+          </div>
+          <div
+            id="advanced-editor"
+            role="tabpanel"
+            aria-labelledby="advanced-tab"
+            hidden
+          >
+            <label class="sr-only" for="entry-search">Search entries</label
+            ><input id="entry-search" placeholder="Search entries…" />
+            <div
+              id="entry-list"
+              tabindex="0"
+              aria-label="Advanced entries"
+            ></div>
+            <div class="pagination">
+              <button data-action="prev-page">Previous</button
+              ><span id="page-label"></span
+              ><button data-action="next-page">Next</button>
+            </div>
+            <button class="outlined wide" data-action="new-entry">
+              ＋ Add entry
+            </button>
+          </div>
+          <div class="editor-tools">
+            <button data-action="shuffle">⇄ <span>Shuffle</span></button
+            ><button data-action="sort">A↓ <span>Sort</span></button
+            ><button data-action="import">↥ <span>Import</span></button
+            ><button data-action="clear">⌫ <span>Clear</span></button>
+          </div>
+          <div class="editor-bottom">
+            <label class="check"
+              ><input id="dedupe" type="checkbox" />Remove duplicates
+              automatically</label
+            ><button data-action="tools" class="text-button">
+              Numbers & teams
+            </button>
+          </div>
+        </aside>
+      </section>
+      <section class="below">
+        <button class="feature-card" data-action="customize">
+          <span class="card-icon">✧</span
+          ><span
+            ><strong>Make it yours</strong
+            ><small>Colors, sounds & spin settings</small></span
+          ><span class="chevron">›</span></button
+        ><button class="feature-card" data-action="history">
+          <span class="card-icon">◷</span
+          ><span
+            ><strong>A little history</strong
+            ><small id="history-summary"
+              >Your picks, all in one place</small
+            ></span
+          ><span class="chevron">›</span></button
+        ><button class="feature-card" data-action="templates">
+          <span class="card-icon">▦</span
+          ><span
+            ><strong>Skip the blank page</strong
+            ><small>A wheel for every occasion</small></span
+          ><span class="chevron">›</span>
+        </button>
+      </section>
+      <footer>
+        <span>Made for moments that need a little chance.</span>
+        <div>
+          <span id="connection-status">Local-first. Yours to keep.</span
+          ><button data-action="undo" aria-label="Undo">↶</button
+          ><button data-action="redo" aria-label="Redo">↷</button
+          ><button data-action="export">Export</button
+          ><button data-action="spin-all">Spin all wheels</button>
+        </div>
+      </footer>
+    </main>
+    <dialog id="dialog" aria-labelledby="dialog-title">
+      <div class="dialog-heading">
+        <h2 id="dialog-title"></h2>
+        <button class="icon" data-action="close" aria-label="Close dialog">
+          ×
+        </button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+    <canvas id="confetti" aria-hidden="true"></canvas>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
+
